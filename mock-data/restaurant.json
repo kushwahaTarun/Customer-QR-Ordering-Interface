@@ -1,0 +1,28 @@
+{
+  "restaurants": [
+    {
+      "slug": "abc-lounge",
+      "name": "ABC Lounge",
+      "tagline": "Premium dining experience",
+      "logo": "/brands/abc-lounge.svg",
+      "theme": {
+        "mode": "dark",
+        "primary": "#c9a46a",
+        "background": "#100c09"
+      },
+      "categories": ["food", "drinks", "desserts", "combos"]
+    },
+    {
+      "slug": "cafe-xyz",
+      "name": "Cafe XYZ",
+      "tagline": "Slow mornings. Honest food.",
+      "logo": "/brands/cafe-xyz.svg",
+      "theme": {
+        "mode": "light",
+        "primary": "#9c3d2e",
+        "background": "#f4ebe0"
+      },
+      "categories": ["food", "drinks", "desserts", "combos"]
+    }
+  ]
+}
