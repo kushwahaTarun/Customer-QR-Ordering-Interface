@@ -13,6 +13,7 @@ const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -39,7 +40,7 @@ export const metadata: Metadata = {
     template: "%s · Digital Dining",
   },
   description:
-    "A premium mobile-first QR ordering experience for restaurant guests.",
+    "A private dining room in the guest’s hand. Branded menus, table ordering, and house rewards.",
 };
 
 export const viewport: Viewport = {
