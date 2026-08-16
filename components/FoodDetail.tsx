@@ -83,20 +83,22 @@ export function FoodDetail({ item }: { item: MenuItem }) {
       </div>
 
       <section className="relative -mt-16 space-y-6 px-5 pb-8">
-        <div className="rounded-[1.6rem] bg-card/92 p-5 shadow-[0_20px_50px_rgba(0,0,0,0.18)] ring-1 ring-foreground/8 backdrop-blur">
+        <div className="rounded-[1.6rem] bg-card/92 p-5 shadow-[0_20px_50px_rgba(0,0,0,0.18)] gold-hairline backdrop-blur">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.22em] text-primary">
+              <p className="eyebrow">
                 {restaurant.categories.find((c) => c.id === item.categoryId)?.name}
               </p>
-              <h1 className="font-heading mt-1 text-4xl leading-none">{item.name}</h1>
+              <h1 className="font-heading mt-2 text-[2.6rem] leading-[0.9]">{item.name}</h1>
             </div>
             <DietBadge diet={item.diet} />
           </div>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="serif-italic mt-3 text-lg leading-snug text-foreground/80">
             {item.description}
           </p>
-          <p className="mt-4 font-heading text-3xl">{formatINR(unitPrice)}</p>
+          <p className="price mt-4 text-sm tracking-[0.08em] text-primary">
+            {formatINR(unitPrice)}
+          </p>
           {!item.available ? (
             <p className="mt-2 text-sm text-destructive">Currently unavailable</p>
           ) : null}
@@ -194,7 +196,7 @@ export function FoodDetail({ item }: { item: MenuItem }) {
         </div>
 
         <Button
-          className="h-12 w-full rounded-full text-base"
+          className="gold-fill h-12 w-full rounded-full text-base tracking-[0.12em] uppercase"
           disabled={!item.available}
           onClick={handleAdd}
         >

@@ -227,9 +227,51 @@
 
 .scan-grid {
   background-image:
-    linear-gradient(rgba(201, 164, 106, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(201, 164, 106, 0.08) 1px, transparent 1px);
-  background-size: 48px 48px;
+    linear-gradient(rgba(201, 164, 106, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201, 164, 106, 0.07) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+.eyebrow {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.gold-rule {
+  height: 1px;
+  width: 2.75rem;
+  background: linear-gradient(90deg, var(--primary), transparent);
+}
+
+.gold-rule-center {
+  height: 1px;
+  width: 4rem;
+  margin-inline: auto;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+}
+
+.gold-hairline {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 28%, transparent);
+}
+
+.gold-fill {
+  background: linear-gradient(180deg, #e3c48a 0%, #c9a46a 48%, #a07d3d 100%);
+  color: #1a140c;
+}
+
+.serif-italic {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.device-bezel {
+  background:
+    linear-gradient(180deg, rgba(212, 175, 55, 0.28), rgba(80, 58, 28, 0.08)),
+    #120e0b;
 }
 
 @media (prefers-reduced-motion: reduce) {

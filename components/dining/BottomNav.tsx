@@ -14,7 +14,7 @@ export function BottomNav() {
   const base = `/restaurant/${restaurant.slug}`;
 
   const items = [
-    { href: base, label: "Home", icon: Home, match: (path: string) => path === base },
+    { href: base, label: "House", icon: Home, match: (path: string) => path === base },
     {
       href: `${base}/menu/food`,
       label: "Menu",
@@ -23,13 +23,13 @@ export function BottomNav() {
     },
     {
       href: `${base}/cart`,
-      label: "Cart",
+      label: "Table",
       icon: ShoppingBag,
       match: (path: string) => path.endsWith("/cart") || path.endsWith("/checkout"),
     },
     {
       href: `${base}/loyalty`,
-      label: "Rewards",
+      label: "House card",
       icon: Sparkles,
       match: (path: string) => path.endsWith("/loyalty"),
     },
@@ -38,9 +38,9 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Guest navigation"
-      className="glass-panel absolute inset-x-0 bottom-0 z-30 border-t border-border/70 px-2 pt-1 pb-[max(0.6rem,env(safe-area-inset-bottom))]"
+      className="glass-panel absolute inset-x-0 bottom-0 z-30 border-t border-primary/15 px-2 pt-1 pb-[max(0.55rem,env(safe-area-inset-bottom))]"
     >
-      <ul className="grid grid-cols-4 gap-2">
+      <ul className="grid grid-cols-4 gap-1">
         {items.map((item) => {
           const active = item.match(pathname);
           const Icon = item.icon;
@@ -50,17 +50,18 @@ export function BottomNav() {
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "pressable relative flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl px-2 py-2 text-xs tracking-wide transition-colors",
-                  active
-                    ? "bg-primary/14 text-primary"
-                    : "text-muted-foreground hover:text-foreground",
+                  "pressable relative flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl px-1 py-2 text-[10px] tracking-[0.16em] uppercase transition-colors",
+                  active ? "text-primary" : "text-muted-foreground hover:text-foreground",
                 )}
               >
-                <Icon className="size-5" aria-hidden="true" />
+                <Icon className="size-4" strokeWidth={1.4} aria-hidden="true" />
                 {item.label}
-                {item.label === "Cart" && count > 0 ? (
+                {active ? (
+                  <span className="absolute inset-x-6 bottom-1 h-px bg-primary" />
+                ) : null}
+                {item.label === "Table" && count > 0 ? (
                   <span
-                    className="absolute top-1.5 right-3 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[11px] font-semibold text-primary-foreground"
+                    className="absolute top-1.5 right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-medium text-primary-foreground"
                     aria-label={`${count} items in cart`}
                   >
                     {count}

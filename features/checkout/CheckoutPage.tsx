@@ -282,7 +282,7 @@ export function CheckoutPage() {
             </label>
 
             <Button
-              className="h-12 w-full rounded-full text-base"
+              className="gold-fill h-12 w-full rounded-full text-base tracking-[0.12em] uppercase"
               onClick={() => void handleSubmit()}
               disabled={submitting}
             >

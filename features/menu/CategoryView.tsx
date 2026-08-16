@@ -35,7 +35,7 @@ export function CategoryView({ categorySlug }: { categorySlug: string }) {
         subtitle={category.description}
         backHref={`/restaurant/${restaurant.slug}`}
       />
-      <div className="glass-panel sticky top-[4.35rem] z-10 border-b border-border/50 px-4 py-3">
+      <div className="glass-panel sticky top-[4.35rem] z-10 border-b border-primary/12 px-4 py-3">
         <div className="mb-3 flex flex-wrap gap-2">
           {restaurant.categories.map((entry) => {
             const active = entry.slug === category.slug;
@@ -48,7 +48,7 @@ export function CategoryView({ categorySlug }: { categorySlug: string }) {
                   "inline-flex min-h-11 items-center rounded-full px-4 text-sm whitespace-nowrap transition",
                   active
                     ? "bg-primary text-primary-foreground"
-                    : "bg-secondary text-secondary-foreground",
+                    : "border border-primary/15 bg-transparent text-foreground",
                 )}
               >
                 {entry.name}

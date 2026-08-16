@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/features/cart/CartProvider";
 import { useRestaurant } from "@/features/restaurant/RestaurantProvider";
@@ -55,20 +54,13 @@ export function RecommendationCard({
   };
 
   return (
-    <section className="overflow-hidden rounded-[1.6rem] bg-secondary/80 p-4 ring-1 ring-primary/20">
-      <div className="mb-4 flex items-center gap-2 text-primary">
-        <Sparkles className="size-4" />
-        <p className="text-[11px] uppercase tracking-[0.22em]">
-          {data.set.headline}
-        </p>
-      </div>
-      <p className="text-sm text-muted-foreground">{data.set.supportingCopy}</p>
+    <section className="rounded-[1.5rem] border border-primary/18 bg-card/70 p-5">
+      <p className="eyebrow">{data.set.headline}</p>
+      <div className="gold-rule mt-3" />
+      <p className="serif-italic mt-3 text-lg">{data.set.supportingCopy}</p>
       <div className="mt-4 grid gap-3">
         {data.items.map((item) => (
-          <div
-            key={item.id}
-            className="flex items-center gap-3 rounded-2xl bg-card/80 p-2.5"
-          >
+          <div key={item.id} className="flex items-center gap-3">
             <div className="relative size-14 overflow-hidden rounded-xl">
               <Image
                 src={item.image}
@@ -79,32 +71,32 @@ export function RecommendationCard({
               />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate font-medium">{item.name}</p>
-              <p className="text-sm text-muted-foreground">{formatINR(item.price)}</p>
+              <p className="font-heading text-xl leading-none">{item.name}</p>
+              <p className="price mt-1 text-sm text-primary">{formatINR(item.price)}</p>
             </div>
             <Button
-              size="sm"
-              className="rounded-full"
+              variant="outline"
+              className="h-11 rounded-full border-primary/30"
               onClick={() => addSuggested(item.id)}
             >
-              Add {item.name.split(" ")[0]}
+              Add
             </Button>
           </div>
         ))}
       </div>
       {data.set.combo ? (
-        <div className="mt-4 rounded-2xl border border-primary/25 bg-primary/8 px-4 py-3">
+        <div className="mt-5 border-t border-primary/15 pt-4">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.18em] text-primary">
-                Combo Offer
+              <p className="eyebrow">The pairing</p>
+              <p className="font-heading mt-1 text-2xl leading-none">
+                {data.set.combo.name}
               </p>
-              <p className="mt-1 font-heading text-xl">{data.set.combo.name}</p>
-              <p className="text-sm text-muted-foreground">
+              <p className="mt-1 text-sm text-muted-foreground">
                 Save {formatINR(data.set.combo.saveAmount)}
               </p>
             </div>
-            <Button className="rounded-full" onClick={addCombo}>
+            <Button className="gold-fill rounded-full" onClick={addCombo}>
               {data.set.combo.ctaLabel}
             </Button>
           </div>
