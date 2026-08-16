@@ -2,11 +2,13 @@ import type { CSSProperties } from "react";
 import type { RestaurantTheme } from "@/types/dining";
 
 const headingFonts = {
+  playfair: "var(--font-playfair), Georgia, serif",
   cormorant: "var(--font-cormorant), 'Times New Roman', serif",
   fraunces: "var(--font-fraunces), Georgia, serif",
 } as const;
 
 const sansFonts = {
+  karla: "var(--font-karla), ui-sans-serif, system-ui, sans-serif",
   outfit: "var(--font-montserrat), ui-sans-serif, system-ui, sans-serif",
   "dm-sans": "var(--font-montserrat), ui-sans-serif, system-ui, sans-serif",
 } as const;

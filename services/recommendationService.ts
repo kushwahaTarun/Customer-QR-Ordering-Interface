@@ -1,42 +1,74 @@
 import { recommendations } from "@/mock-data/recommendations";
 import { findMenuItemSync } from "@/services/menuService";
-import type { MenuItem, RecommendationSet } from "@/types/dining";
+import type { DietFilter } from "@/utils/diet";
+import { matchesDiet } from "@/utils/diet";
+import type { DietType, MenuItem, RecommendationSet } from "@/types/dining";
 
-const wait = (ms = 90) => new Promise((resolve) => setTimeout(resolve, ms));
+const wait = (ms = 80) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export interface ResolvedRecommendation {
   set: RecommendationSet;
   items: MenuItem[];
 }
 
-/**
- * Customer-side pairing suggestions.
- * Returns mock data for now. Replace with:
- * POST /api/restaurants/:slug/recommendations
- *
- * When the backend is ready, this is the SpaceXAI-backed
- * endpoint (XAI_API_KEY, https://api.x.ai/v1). Do not call
- * the model from the browser.
- */
+function filterDiet(items: MenuItem[], diet?: DietFilter) {
+  if (!diet || diet === "all") return items;
+  return items.filter((item) => matchesDiet(item.diet, diet));
+}
+
+function resolveSet(
+  slug: string,
+  set: RecommendationSet,
+  diet?: DietFilter,
+): ResolvedRecommendation | null {
+  const items = filterDiet(
+    set.suggestedItemIds
+      .map((id) => findMenuItemSync(slug, id))
+      .filter((item): item is MenuItem => Boolean(item && item.available)),
+    diet,
+  );
+  if (items.length === 0) return null;
+  return { set, items };
+}
+
+export async function getHomeRecommendations(
+  slug: string,
+  diet?: DietFilter,
+): Promise<ResolvedRecommendation | null> {
+  await wait();
+  const match =
+    recommendations.find(
+      (entry) => entry.restaurantSlug === slug && entry.showOnHome,
+    ) ?? null;
+  return match ? resolveSet(slug, match, diet) : null;
+}
+
 export async function getRecommendations(
   slug: string,
   cartItemIds: string[],
+  diet?: DietFilter,
 ): Promise<ResolvedRecommendation | null> {
   await wait();
-  if (cartItemIds.length === 0) return null;
+  if (cartItemIds.length === 0) {
+    return getHomeRecommendations(slug, diet);
+  }
 
   const match =
     recommendations.find(
       (entry) =>
         entry.restaurantSlug === slug &&
+        !entry.showOnHome &&
         entry.triggerItemIds.some((id) => cartItemIds.includes(id)),
     ) ?? null;
 
-  if (!match) return null;
+  if (!match) return getHomeRecommendations(slug, diet);
+  return resolveSet(slug, match, diet);
+}
 
-  const items = match.suggestedItemIds
-    .map((id) => findMenuItemSync(slug, id))
-    .filter((item): item is MenuItem => Boolean(item));
+export function itemReason(set: RecommendationSet, itemId: string) {
+  return set.reasons?.[itemId];
+}
 
-  return { set: match, items };
+export function isVegDiet(diet: DietType) {
+  return diet === "veg";
 }

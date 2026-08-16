@@ -7,6 +7,7 @@ export async function generateStaticParams() {
   const params: { slug: string; category: string }[] = [];
   for (const slug of slugs) {
     const restaurant = await getRestaurantBySlug(slug);
+    params.push({ slug, category: "all" });
     for (const category of restaurant?.categories ?? []) {
       params.push({ slug, category: category.slug });
     }
@@ -21,7 +22,11 @@ export default async function CategoryPage({
 }) {
   const { slug, category } = await params;
   const restaurant = await getRestaurantBySlug(slug);
-  if (!restaurant?.categories.some((entry) => entry.slug === category)) {
+  const known =
+    category === "all" ||
+    category === "food" ||
+    restaurant?.categories.some((entry) => entry.slug === category);
+  if (!restaurant || !known) {
     notFound();
   }
   return <CategoryView categorySlug={category} />;

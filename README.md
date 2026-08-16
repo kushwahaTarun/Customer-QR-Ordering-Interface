@@ -1,6 +1,6 @@
-# Restaurant Digital Dining Experience
+# Shagun — Digital Dining
 
-Customer-only QR ordering for the table. Guests scan, browse a branded menu, add to cart, pay, track the kitchen, and join house rewards.
+Customer-only QR ordering for Shagun. Guests scan the table QR, browse the menu, add to cart, pay, track the kitchen, and join Shagun Rewards.
 
 This is not an admin, owner, or analytics product.
 
@@ -15,14 +15,13 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## QR entry
 
-A printed table QR should open:
+Open `/demo` to print signed table QRs for Shagun. A printed table QR should open a signed link like:
 
 ```
-/restaurant/abc-lounge?table=6
-/restaurant/cafe-xyz?table=4
+/restaurant/shagun?k=<signed-token>
 ```
 
-The home page is a scan simulator for demos.
+Guests should not type a URL. If someone changes the token or restaurant name, the app shows an invalid QR page.
 
 ## Stack
 

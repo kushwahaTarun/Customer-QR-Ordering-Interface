@@ -1,10 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { Trash2 } from "lucide-react";
 import { QuantityStepper } from "@/components/dining/QuantityStepper";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import {
   Drawer,
   DrawerContent,
@@ -125,14 +124,19 @@ export function CartDrawer() {
           </div>
         ) : null}
         <DrawerFooter>
-          <Button
-            className="h-12 rounded-full"
-            disabled={count === 0}
-            render={<Link href={`/restaurant/${restaurant.slug}/cart`} />}
-            onClick={closeDrawer}
-          >
-            Review cart
-          </Button>
+          {count === 0 ? (
+            <Button className="h-12 rounded-full" disabled>
+              Review cart
+            </Button>
+          ) : (
+            <ButtonLink
+              href={`/restaurant/${restaurant.slug}/cart`}
+              className="h-12 rounded-full"
+              onClick={closeDrawer}
+            >
+              Review cart
+            </ButtonLink>
+          )}
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

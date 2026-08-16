@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { OrderStatus } from "@/components/OrderStatus";
 import { PageHeader } from "@/components/dining/PageHeader";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { useRestaurant } from "@/features/restaurant/RestaurantProvider";
+import { useCart } from "@/features/cart/CartProvider";
+import { useI18n } from "@/features/i18n/LanguageProvider";
 import { getOrder, refreshKitchenStatus } from "@/services/orderService";
 import { findMenuItemSync } from "@/services/menuService";
 import type { Order } from "@/types/dining";
@@ -13,6 +14,8 @@ import { formatINR } from "@/utils/currency";
 
 export function OrderConfirmation({ orderId }: { orderId: string }) {
   const restaurant = useRestaurant();
+  const { t } = useI18n();
+  const { clearCart } = useCart();
   const [order, setOrder] = useState<Order | null>(null);
 
   useEffect(() => {
@@ -22,11 +25,12 @@ export function OrderConfirmation({ orderId }: { orderId: string }) {
       setOrder(next);
     };
     void load();
+    clearCart();
     const timer = window.setInterval(() => {
       void load();
-    }, 2500);
+    }, 4000);
     return () => window.clearInterval(timer);
-  }, [orderId]);
+  }, [orderId, clearCart]);
 
   if (!order) {
     return (
@@ -38,14 +42,13 @@ export function OrderConfirmation({ orderId }: { orderId: string }) {
 
   return (
     <div className="animate-rise">
-      <PageHeader title="Confirmed" subtitle={restaurant.name} />
+      <PageHeader title={t("orderPlaced")} subtitle={restaurant.name} />
       <div className="space-y-6 px-5 py-6">
         <section className="text-center">
-          <p className="text-[11px] uppercase tracking-[0.22em] text-primary">
-            Thank you
-          </p>
           <h2 className="font-heading mt-2 text-4xl">Order #{order.orderNumber}</h2>
-          <p className="mt-2 text-muted-foreground">Table {order.tableNumber}</p>
+          <p className="mt-2 text-muted-foreground">
+            {t("table")} {order.tableNumber}
+          </p>
           <p className="mt-1 text-sm text-muted-foreground">
             {order.paymentMethod === "online"
               ? order.paymentStatus === "success"
@@ -59,9 +62,7 @@ export function OrderConfirmation({ orderId }: { orderId: string }) {
 
         <section className="rounded-[1.5rem] bg-card p-5 ring-1 ring-foreground/8">
           <OrderStatus status={order.status} />
-          <p className="mt-5 text-sm text-muted-foreground">
-            Estimated preparation time: {restaurant.estimatedPrepMinutes} minutes
-          </p>
+          <p className="mt-5 text-sm text-muted-foreground">{t("kitchenWait")}</p>
         </section>
 
         <section>
@@ -81,21 +82,19 @@ export function OrderConfirmation({ orderId }: { orderId: string }) {
         </section>
 
         <div className="grid gap-2">
-          <Button
+          <ButtonLink
+            href={`/restaurant/${restaurant.slug}/track/${order.id}`}
             className="h-12 rounded-full"
-            render={
-              <Link href={`/restaurant/${restaurant.slug}/track/${order.id}`} />
-            }
           >
-            Track order
-          </Button>
-          <Button
+            {t("trackOrder")}
+          </ButtonLink>
+          <ButtonLink
+            href={`/restaurant/${restaurant.slug}/loyalty`}
             variant="outline"
             className="h-11 rounded-full"
-            render={<Link href={`/restaurant/${restaurant.slug}/loyalty`} />}
           >
             View {restaurant.loyaltyProgramName}
-          </Button>
+          </ButtonLink>
         </div>
       </div>
     </div>

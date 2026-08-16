@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { useLoyalty } from "@/features/loyalty/LoyaltyProvider";
 import { useRestaurant } from "@/features/restaurant/RestaurantProvider";
 import { cn } from "@/lib/utils";
@@ -36,13 +35,13 @@ export function LoyaltyCard({ className }: { className?: string }) {
             {account.joined ? account.points : "—"}
           </p>
         </div>
-        <Button
+        <ButtonLink
+          href={`/restaurant/${restaurant.slug}/loyalty`}
           variant="secondary"
           className="rounded-full border border-current/20 bg-black/10 text-inherit hover:bg-black/16"
-          render={<Link href={`/restaurant/${restaurant.slug}/loyalty`} />}
         >
-          Open card
-        </Button>
+          Rewards
+        </ButtonLink>
       </div>
     </section>
   );
