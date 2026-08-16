@@ -23,20 +23,20 @@ export function FloatingCartBar() {
   if (hidden) return null;
 
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-[4.75rem] z-20 px-4">
+    <div className="pointer-events-none absolute inset-x-0 bottom-[5.25rem] z-20 px-4">
       <Link
         href={`/restaurant/${restaurant.slug}/cart`}
-        className="pointer-events-auto flex items-center justify-between rounded-full bg-primary px-5 py-3 text-primary-foreground shadow-[0_12px_40px_rgba(0,0,0,0.28)] transition hover:brightness-105"
+        className="pressable pointer-events-auto flex min-h-14 items-center justify-between rounded-full bg-primary px-5 py-3 text-primary-foreground shadow-[0_12px_40px_rgba(0,0,0,0.28)] transition hover:brightness-105"
       >
         <div>
-          <p className="text-[11px] uppercase tracking-[0.18em] opacity-80">
+          <p className="text-xs uppercase tracking-[0.16em] opacity-80">
             {count} {count === 1 ? "item" : "items"}
           </p>
-          <p className="font-medium">{formatINR(total)}</p>
+          <p className="price font-medium">{formatINR(total)}</p>
         </div>
         <span className="inline-flex items-center gap-1 text-sm font-medium">
           View cart
-          <ArrowRight className="size-4" />
+          <ArrowRight className="size-4" aria-hidden="true" />
         </span>
       </Link>
     </div>

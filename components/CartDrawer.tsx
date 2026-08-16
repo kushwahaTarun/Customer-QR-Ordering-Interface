@@ -80,11 +80,11 @@ export function CartDrawer() {
                     </div>
                     <button
                       type="button"
-                      className="text-muted-foreground"
+                      className="flex size-11 cursor-pointer items-center justify-center rounded-full text-muted-foreground"
                       onClick={() => removeItem(line.lineId)}
                       aria-label={`Remove ${item.name}`}
                     >
-                      <Trash2 className="size-4" />
+                      <Trash2 className="size-4" aria-hidden="true" />
                     </button>
                   </div>
                   <div className="mt-2 flex items-center justify-between">

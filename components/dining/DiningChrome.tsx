@@ -24,7 +24,9 @@ export function DiningChrome({ children }: { children: ReactNode }) {
         <div className="absolute inset-0 bg-black/40" />
       </div>
       <div className="relative mx-auto flex min-h-dvh w-full max-w-md flex-col bg-background shadow-[0_0_80px_rgba(0,0,0,0.35)] md:min-h-[860px] md:my-8 md:overflow-hidden md:rounded-[2rem] md:ring-1 md:ring-foreground/10">
-        <main className="relative flex-1 pb-36">{children}</main>
+        <main id="main-content" className="relative flex-1 pb-40" tabIndex={-1}>
+          {children}
+        </main>
         <FloatingCartBar />
         <BottomNav />
       </div>

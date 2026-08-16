@@ -19,37 +19,33 @@ export function PageHeader({
 }) {
   const router = useRouter();
 
-  const back = (
-    <Button
-      variant="ghost"
-      size="icon-sm"
-      className="rounded-full bg-background/40 backdrop-blur"
-      aria-label="Go back"
-      onClick={() => {
-        if (backHref) return;
-        router.back();
-      }}
-      render={backHref ? <Link href={backHref} /> : undefined}
-    >
-      <ArrowLeft />
-    </Button>
-  );
-
   return (
     <header
       className={cn(
-        "sticky top-0 z-20 flex items-center gap-3 px-4 py-3",
+        "sticky top-0 z-20 flex items-center gap-3 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))]",
         transparent
           ? "absolute inset-x-0 bg-transparent"
-          : "border-b border-border/60 bg-background/85 backdrop-blur-xl",
+          : "glass-panel border-b border-border/60",
       )}
     >
-      {back}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="rounded-full bg-background/50 backdrop-blur"
+        aria-label="Go back"
+        onClick={() => {
+          if (backHref) return;
+          router.back();
+        }}
+        render={backHref ? <Link href={backHref} /> : undefined}
+      >
+        <ArrowLeft aria-hidden="true" />
+      </Button>
       {title ? (
         <div className="min-w-0">
-          <h1 className="font-heading truncate text-xl leading-none">{title}</h1>
+          <h1 className="font-heading truncate text-2xl leading-none">{title}</h1>
           {subtitle ? (
-            <p className="mt-1 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            <p className="mt-1 text-xs uppercase tracking-[0.16em] text-muted-foreground">
               {subtitle}
             </p>
           ) : null}

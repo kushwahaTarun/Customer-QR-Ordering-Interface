@@ -20,32 +20,34 @@ export function QuantityStepper({
   return (
     <div
       className={cn(
-        "inline-flex items-center rounded-full border border-border bg-secondary/70",
+        "inline-flex items-center gap-1 rounded-full border border-border bg-secondary/70 p-0.5",
         className,
       )}
     >
       <Button
         type="button"
         variant="ghost"
-        size="icon-sm"
-        className="rounded-full"
+        size="icon"
+        className="size-11 rounded-full"
         aria-label="Decrease quantity"
         onClick={() => onChange(Math.max(min, value - 1))}
         disabled={value <= min}
       >
-        <Minus />
+        <Minus aria-hidden="true" />
       </Button>
-      <span className="min-w-6 text-center text-sm font-medium">{value}</span>
+      <span className="price min-w-7 text-center text-sm font-medium" aria-live="polite">
+        {value}
+      </span>
       <Button
         type="button"
         variant="ghost"
-        size="icon-sm"
-        className="rounded-full"
+        size="icon"
+        className="size-11 rounded-full"
         aria-label="Increase quantity"
         onClick={() => onChange(Math.min(max, value + 1))}
         disabled={value >= max}
       >
-        <Plus />
+        <Plus aria-hidden="true" />
       </Button>
     </div>
   );

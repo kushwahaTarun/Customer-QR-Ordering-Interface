@@ -6,6 +6,7 @@ import { Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/dining/PageHeader";
 import { QuantityStepper } from "@/components/dining/QuantityStepper";
 import { RecommendationCard } from "@/components/RecommendationCard";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/features/cart/CartProvider";
@@ -20,6 +21,7 @@ export function CartPage() {
     items,
     updateQuantity,
     removeItem,
+    restoreItem,
     subtotal,
     tax,
     total,
@@ -95,11 +97,20 @@ export function CartPage() {
                         </div>
                         <button
                           type="button"
-                          onClick={() => removeItem(line.lineId)}
-                          className="text-muted-foreground"
+                          onClick={() => {
+                            const removed = removeItem(line.lineId);
+                            if (!removed) return;
+                            toast("Removed from your table", {
+                              action: {
+                                label: "Undo",
+                                onClick: () => restoreItem(removed),
+                              },
+                            });
+                          }}
+                          className="flex size-11 cursor-pointer items-center justify-center rounded-full text-muted-foreground hover:bg-secondary"
                           aria-label={`Remove ${item.name}`}
                         >
-                          <Trash2 className="size-4" />
+                          <Trash2 className="size-4" aria-hidden="true" />
                         </button>
                       </div>
                       <div className="mt-3 flex items-center justify-between">
@@ -110,7 +121,7 @@ export function CartPage() {
                             updateQuantity(line.lineId, value)
                           }
                         />
-                        <p>{formatINR(line.unitPrice * line.quantity)}</p>
+                        <p className="price">{formatINR(line.unitPrice * line.quantity)}</p>
                       </div>
                     </div>
                   </article>
@@ -123,7 +134,7 @@ export function CartPage() {
             <div className="rounded-[1.4rem] bg-card p-4 ring-1 ring-foreground/8">
               <div className="flex justify-between text-sm text-muted-foreground">
                 <span>Subtotal</span>
-                <span>{formatINR(subtotal)}</span>
+                <span className="price">{formatINR(subtotal)}</span>
               </div>
               {comboDiscount > 0 ? (
                 <div className="mt-2 flex justify-between text-sm text-primary">
@@ -138,7 +149,7 @@ export function CartPage() {
               <Separator className="my-3" />
               <div className="flex justify-between text-base font-medium">
                 <span>Total</span>
-                <span>{formatINR(total)}</span>
+                <span className="price">{formatINR(total)}</span>
               </div>
             </div>
 

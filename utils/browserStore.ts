@@ -2,6 +2,7 @@ type Listener = () => void;
 
 const listeners = new Map<string, Set<Listener>>();
 const snapshotCache = new Map<string, { raw: string; value: unknown }>();
+const serverSnapshots = new Map<string, unknown>();
 
 function notify(key: string) {
   const set = listeners.get(key);
@@ -19,7 +20,9 @@ export function subscribeStore(key: string, listener: Listener) {
 }
 
 export function readCachedStore<T>(key: string, fallback: T): T {
-  if (typeof window === "undefined") return fallback;
+  if (typeof window === "undefined") {
+    return getServerSnapshot(key, () => fallback);
+  }
   const raw = window.localStorage.getItem(key) ?? "";
   const cached = snapshotCache.get(key);
   if (cached && cached.raw === raw) {
@@ -34,6 +37,15 @@ export function readCachedStore<T>(key: string, fallback: T): T {
     }
   }
   snapshotCache.set(key, { raw, value });
+  return value;
+}
+
+export function getServerSnapshot<T>(key: string, create: () => T): T {
+  if (serverSnapshots.has(key)) {
+    return serverSnapshots.get(key) as T;
+  }
+  const value = create();
+  serverSnapshots.set(key, value);
   return value;
 }
 

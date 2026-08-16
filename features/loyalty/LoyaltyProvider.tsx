@@ -19,6 +19,7 @@ import {
 } from "@/services/loyaltyService";
 import type { GuestProfile, LoyaltyAccount } from "@/types/dining";
 import {
+  getServerSnapshot,
   readCachedStore,
   subscribeStore,
   writeCachedStore,
@@ -39,8 +40,12 @@ interface LoyaltyContextValue {
 
 const LoyaltyContext = createContext<LoyaltyContextValue | null>(null);
 
+const emptyAccounts = new Map<string, LoyaltyAccount>();
+
 function emptyAccount(slug: string): LoyaltyAccount {
-  return {
+  const cached = emptyAccounts.get(slug);
+  if (cached) return cached;
+  const next: LoyaltyAccount = {
     restaurantSlug: slug,
     name: "",
     mobile: "",
@@ -48,6 +53,8 @@ function emptyAccount(slug: string): LoyaltyAccount {
     joined: false,
     history: [],
   };
+  emptyAccounts.set(slug, next);
+  return next;
 }
 
 export function LoyaltyProvider({ children }: { children: ReactNode }) {
@@ -62,13 +69,13 @@ export function LoyaltyProvider({ children }: { children: ReactNode }) {
         loyaltyKey,
         emptyAccount(restaurant.slug),
       ),
-    () => emptyAccount(restaurant.slug),
+    () => getServerSnapshot(loyaltyKey, () => emptyAccount(restaurant.slug)),
   );
 
   const guest = useSyncExternalStore(
     (listener) => subscribeStore(guestKey, listener),
     () => readCachedStore<GuestProfile | null>(guestKey, null),
-    () => null,
+    () => getServerSnapshot(guestKey, () => null),
   );
 
   const rewards = useMemo(

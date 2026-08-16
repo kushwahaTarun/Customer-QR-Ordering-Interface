@@ -21,6 +21,7 @@ import {
   optionSignature,
 } from "@/utils/pricing";
 import {
+  getServerSnapshot,
   readCachedStore,
   subscribeStore,
   writeCachedStore,
@@ -49,21 +50,33 @@ interface CartContextValue {
   closeDrawer: () => void;
   addItem: (input: AddItemInput) => void;
   updateQuantity: (lineId: string, quantity: number) => void;
-  removeItem: (lineId: string) => void;
+  removeItem: (lineId: string) => CartLine | null;
+  restoreItem: (line: CartLine) => void;
   applyComboDiscount: (amount: number, label: string) => void;
   clearCart: () => void;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-const emptyCart = (slug: string): CartSnapshot => ({
-  restaurantSlug: slug,
-  items: [],
-  comboDiscount: 0,
-});
+const emptyCarts = new Map<string, CartSnapshot>();
+
+function emptyCart(slug: string): CartSnapshot {
+  const cached = emptyCarts.get(slug);
+  if (cached) return cached;
+  const next: CartSnapshot = {
+    restaurantSlug: slug,
+    items: [],
+    comboDiscount: 0,
+  };
+  emptyCarts.set(slug, next);
+  return next;
+}
 
 function getCart(slug: string) {
-  const stored = readCachedStore<CartSnapshot | null>(storageKeys.cart(slug), null);
+  const stored = readCachedStore<CartSnapshot | null>(
+    storageKeys.cart(slug),
+    null,
+  );
   if (stored?.restaurantSlug === slug) return stored;
   return emptyCart(slug);
 }
@@ -78,7 +91,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const snapshot = useSyncExternalStore(
     (listener) => subscribeStore(key, listener),
     () => getCart(restaurant.slug),
-    () => emptyCart(restaurant.slug),
+    () => getServerSnapshot(key, () => emptyCart(restaurant.slug)),
   );
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -155,6 +168,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const removeItem = useCallback(
     (lineId: string) => {
+      const existing = getCart(restaurant.slug).items.find(
+        (line) => line.lineId === lineId,
+      );
       persist((current) => {
         const items = current.items.filter((line) => line.lineId !== lineId);
         return {
@@ -163,6 +179,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
           comboDiscount: items.length === 0 ? 0 : current.comboDiscount,
           comboLabel: items.length === 0 ? undefined : current.comboLabel,
         };
+      });
+      return existing ?? null;
+    },
+    [persist, restaurant.slug],
+  );
+
+  const restoreItem = useCallback(
+    (line: CartLine) => {
+      persist((current) => {
+        if (current.items.some((entry) => entry.lineId === line.lineId)) {
+          return current;
+        }
+        return { ...current, items: [...current.items, line] };
       });
     },
     [persist],
@@ -206,6 +235,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       addItem,
       updateQuantity,
       removeItem,
+      restoreItem,
       applyComboDiscount,
       clearCart,
     }),
@@ -218,6 +248,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       addItem,
       updateQuantity,
       removeItem,
+      restoreItem,
       applyComboDiscount,
       clearCart,
     ],

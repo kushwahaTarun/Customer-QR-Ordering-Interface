@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 import { DietBadge } from "@/components/dining/DietBadge";
 import { Button } from "@/components/ui/button";
@@ -11,7 +12,6 @@ import type { MenuItem } from "@/types/dining";
 import { formatINR } from "@/utils/currency";
 import { itemRequiresCustomization } from "@/utils/pricing";
 import { cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
 
 export function MenuCard({
   item,
@@ -42,7 +42,7 @@ export function MenuCard({
         layout === "editorial" && "shadow-[0_18px_40px_rgba(0,0,0,0.12)]",
       )}
     >
-      <Link href={href} className="block">
+      <Link href={href} className="block" aria-label={`View ${item.name}`}>
         <div
           className={cn(
             "relative overflow-hidden",
@@ -58,13 +58,13 @@ export function MenuCard({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/0 to-black/10" />
           <div className="absolute top-3 left-3 flex flex-wrap gap-2">
-            <DietBadge diet={item.diet} className="bg-black/35 text-white backdrop-blur" />
+            <DietBadge diet={item.diet} className="bg-black/45 backdrop-blur" />
             {!item.available ? (
-              <span className="rounded-full bg-black/55 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-white">
+              <span className="rounded-full bg-black/65 px-2.5 py-1 text-[11px] uppercase tracking-[0.14em] text-white">
                 Unavailable
               </span>
             ) : item.chefPick ? (
-              <span className="rounded-full bg-primary px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-primary-foreground">
+              <span className="rounded-full bg-primary px-2.5 py-1 text-[11px] uppercase tracking-[0.14em] text-primary-foreground">
                 Chef&apos;s pick
               </span>
             ) : null}
@@ -74,20 +74,20 @@ export function MenuCard({
       <div className="flex items-end justify-between gap-3 px-4 py-4">
         <div className="min-w-0">
           <Link href={href}>
-            <h3 className="font-heading text-[1.35rem] leading-tight">{item.name}</h3>
+            <h3 className="font-heading text-[1.4rem] leading-tight">{item.name}</h3>
           </Link>
           <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
             {item.description}
           </p>
-          <p className="mt-3 text-base font-medium">{formatINR(item.price)}</p>
+          <p className="price mt-3 text-base font-medium">{formatINR(item.price)}</p>
         </div>
         <Button
-          className="h-10 rounded-full px-4"
+          className="h-11 min-w-11 rounded-full px-4"
           disabled={!item.available}
           onClick={handleAdd}
         >
-          <Plus className="size-4" />
-          Add
+          <Plus className="size-4" aria-hidden="true" />
+          {itemRequiresCustomization(item) ? "Choose" : "Add"}
         </Button>
       </div>
     </article>

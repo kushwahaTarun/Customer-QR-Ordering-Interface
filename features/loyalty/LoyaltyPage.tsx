@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { LoyaltyCard } from "@/components/LoyaltyCard";
 import { PageHeader } from "@/components/dining/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -17,15 +17,28 @@ export function LoyaltyPage() {
     useLoyalty();
   const [name, setName] = useState(guestName || "Rahul");
   const [mobile, setMobile] = useState(guestMobile || "9876543210");
-  const [error, setError] = useState("");
+  const [nameError, setNameError] = useState("");
+  const [mobileError, setMobileError] = useState("");
+  const [joining, setJoining] = useState(false);
+  const summaryRef = useRef<HTMLDivElement>(null);
 
   const handleJoin = async () => {
-    setError("");
-    if (!name.trim() || !isIndianMobile(mobile)) {
-      setError("A name and 10-digit mobile number are required.");
+    const nextName = name.trim() ? "" : "Enter your name.";
+    const nextMobile = isIndianMobile(mobile)
+      ? ""
+      : "Enter a 10-digit Indian mobile number starting with 6–9.";
+    setNameError(nextName);
+    setMobileError(nextMobile);
+    if (nextName || nextMobile) {
+      window.setTimeout(() => summaryRef.current?.focus(), 0);
       return;
     }
-    await join(name.trim(), mobile.trim());
+    setJoining(true);
+    try {
+      await join(name.trim(), mobile.trim());
+    } finally {
+      setJoining(false);
+    }
   };
 
   const loadDemo = async () => {
@@ -49,31 +62,78 @@ export function LoyaltyPage() {
             <p className="text-sm text-muted-foreground">
               {restaurant.loyaltyTagline}. Identification is by mobile number only.
             </p>
+            {nameError || mobileError ? (
+              <div
+                ref={summaryRef}
+                role="alert"
+                tabIndex={-1}
+                className="rounded-2xl border border-destructive/40 bg-destructive/10 p-3 text-sm"
+              >
+                <p className="font-medium">There is a problem</p>
+                <ul className="mt-1 list-disc pl-5">
+                  {nameError ? (
+                    <li>
+                      <a href="#loyalty-name" className="underline">
+                        {nameError}
+                      </a>
+                    </li>
+                  ) : null}
+                  {mobileError ? (
+                    <li>
+                      <a href="#loyalty-mobile" className="underline">
+                        {mobileError}
+                      </a>
+                    </li>
+                  ) : null}
+                </ul>
+              </div>
+            ) : null}
             <div className="space-y-2">
-              <Label htmlFor="loyalty-name">Name</Label>
+              <Label htmlFor="loyalty-name">
+                Name <span className="text-destructive">*</span>
+              </Label>
               <Input
                 id="loyalty-name"
+                autoComplete="name"
                 value={name}
+                aria-invalid={Boolean(nameError)}
+                aria-describedby={nameError ? "loyalty-name-error" : undefined}
                 onChange={(event) => setName(event.target.value)}
-                className="h-11 rounded-2xl"
               />
+              {nameError ? (
+                <p id="loyalty-name-error" className="text-sm text-destructive">
+                  {nameError}
+                </p>
+              ) : null}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="loyalty-mobile">Mobile Number</Label>
+              <Label htmlFor="loyalty-mobile">
+                Mobile Number <span className="text-destructive">*</span>
+              </Label>
               <Input
                 id="loyalty-mobile"
                 inputMode="numeric"
+                autoComplete="tel"
                 maxLength={10}
                 value={mobile}
+                aria-invalid={Boolean(mobileError)}
+                aria-describedby={mobileError ? "loyalty-mobile-error" : undefined}
                 onChange={(event) =>
                   setMobile(event.target.value.replace(/\D/g, "").slice(0, 10))
                 }
-                className="h-11 rounded-2xl"
               />
+              {mobileError ? (
+                <p id="loyalty-mobile-error" className="text-sm text-destructive">
+                  {mobileError}
+                </p>
+              ) : null}
             </div>
-            {error ? <p className="text-sm text-destructive">{error}</p> : null}
-            <Button className="h-11 w-full rounded-full" onClick={() => void handleJoin()}>
-              Join {restaurant.loyaltyProgramName}
+            <Button
+              className="h-12 w-full rounded-full"
+              disabled={joining}
+              onClick={() => void handleJoin()}
+            >
+              {joining ? "Joining…" : `Join ${restaurant.loyaltyProgramName}`}
             </Button>
             {restaurant.slug === "abc-lounge" ? (
               <Button

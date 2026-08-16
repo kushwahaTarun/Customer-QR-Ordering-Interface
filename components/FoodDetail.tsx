@@ -188,7 +188,7 @@ export function FoodDetail({ item }: { item: MenuItem }) {
 
         <div className="flex items-center justify-between">
           <QuantityStepper value={quantity} onChange={setQuantity} />
-          <p className="text-sm text-muted-foreground">
+          <p className="price text-sm text-muted-foreground">
             {formatINR(unitPrice * quantity)}
           </p>
         </div>

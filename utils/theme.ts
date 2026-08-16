@@ -7,8 +7,8 @@ const headingFonts = {
 } as const;
 
 const sansFonts = {
-  outfit: "var(--font-outfit), ui-sans-serif, system-ui, sans-serif",
-  "dm-sans": "var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif",
+  outfit: "var(--font-montserrat), ui-sans-serif, system-ui, sans-serif",
+  "dm-sans": "var(--font-montserrat), ui-sans-serif, system-ui, sans-serif",
 } as const;
 
 export function restaurantThemeStyle(theme: RestaurantTheme): CSSProperties {

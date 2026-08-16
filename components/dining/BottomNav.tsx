@@ -36,8 +36,11 @@ export function BottomNav() {
   ];
 
   return (
-    <nav className="absolute inset-x-0 bottom-0 z-30 border-t border-border/70 bg-background/88 px-3 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-xl">
-      <ul className="grid grid-cols-4 gap-1">
+    <nav
+      aria-label="Guest navigation"
+      className="glass-panel absolute inset-x-0 bottom-0 z-30 border-t border-border/70 px-2 pt-1 pb-[max(0.6rem,env(safe-area-inset-bottom))]"
+    >
+      <ul className="grid grid-cols-4 gap-2">
         {items.map((item) => {
           const active = item.match(pathname);
           const Icon = item.icon;
@@ -45,17 +48,21 @@ export function BottomNav() {
             <li key={item.href}>
               <Link
                 href={item.href}
+                aria-current={active ? "page" : undefined}
                 className={cn(
-                  "relative flex flex-col items-center gap-1 rounded-2xl px-2 py-2 text-[11px] tracking-wide transition-colors",
+                  "pressable relative flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl px-2 py-2 text-xs tracking-wide transition-colors",
                   active
-                    ? "bg-primary/12 text-primary"
+                    ? "bg-primary/14 text-primary"
                     : "text-muted-foreground hover:text-foreground",
                 )}
               >
-                <Icon className="size-4.5" />
+                <Icon className="size-5" aria-hidden="true" />
                 {item.label}
                 {item.label === "Cart" && count > 0 ? (
-                  <span className="absolute top-1 right-4 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
+                  <span
+                    className="absolute top-1.5 right-3 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[11px] font-semibold text-primary-foreground"
+                    aria-label={`${count} items in cart`}
+                  >
                     {count}
                   </span>
                 ) : null}
@@ -64,6 +71,9 @@ export function BottomNav() {
           );
         })}
       </ul>
+      <p className="sr-only" aria-live="polite">
+        {count > 0 ? `${count} items in your cart` : "Cart is empty"}
+      </p>
     </nav>
   );
 }
