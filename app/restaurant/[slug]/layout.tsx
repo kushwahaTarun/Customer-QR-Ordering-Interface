@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { DiningProviders } from "@/features/dining/DiningProviders";
+import { ACCESS_COOKIE, verifyTableAccess } from "@/lib/tableAccess";
 import {
   getRestaurantBySlug,
   getRestaurantSlugs,
@@ -35,5 +37,14 @@ export default async function RestaurantLayout({
   const restaurant = await getRestaurantBySlug(slug);
   if (!restaurant) notFound();
 
-  return <DiningProviders restaurant={restaurant}>{children}</DiningProviders>;
+  const token = (await cookies()).get(ACCESS_COOKIE)?.value;
+  const access = await verifyTableAccess(token);
+  const tableNumber =
+    access?.slug === slug ? access.table : "6";
+
+  return (
+    <DiningProviders restaurant={restaurant} tableNumber={tableNumber}>
+      {children}
+    </DiningProviders>
+  );
 }

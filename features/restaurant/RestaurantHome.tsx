@@ -1,120 +1,107 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { LoyaltyCard } from "@/components/LoyaltyCard";
+import { BrandMark } from "@/components/dining/BrandMark";
+import { CuisineGrid } from "@/components/dining/CuisineGrid";
+import { DietFilterRow } from "@/components/dining/DietFilterRow";
+import { HelpSheet } from "@/components/dining/HelpSheet";
+import { LanguageToggle } from "@/components/dining/LanguageToggle";
 import { MenuCard } from "@/components/MenuCard";
 import { RecommendationCard } from "@/components/RecommendationCard";
-import { SectionTitle } from "@/components/dining/SectionTitle";
-import { Button } from "@/components/ui/button";
-import { useCart } from "@/features/cart/CartProvider";
+import { ButtonLink } from "@/components/ui/button";
+import { useI18n } from "@/features/i18n/LanguageProvider";
+import { usePrefs } from "@/features/prefs/PrefsProvider";
 import { useRestaurant } from "@/features/restaurant/RestaurantProvider";
 import { useSession } from "@/features/session/SessionProvider";
+import { matchesDiet, menuHref } from "@/utils/diet";
 
 export function RestaurantHome() {
   const restaurant = useRestaurant();
   const { tableNumber } = useSession();
-  const { items } = useCart();
-  const featured = restaurant.menuItems.filter(
-    (item) => item.popular || item.chefPick,
-  );
+  const { t } = useI18n();
+  const { dietFilter } = usePrefs();
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setReady(true), 0);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  const popular = restaurant.menuItems.filter((item) => {
+    if (!item.available || !(item.popular || item.chefPick)) return false;
+    return matchesDiet(item.diet, dietFilter);
+  });
 
   return (
     <div className="animate-rise">
-      <section className="relative h-[68vh] min-h-[460px]">
+      <section className="relative h-[52vh] min-h-[340px]">
         <Image
           src={restaurant.coverImage}
-          alt={`${restaurant.name} dining room`}
+          alt=""
           fill
           priority
           sizes="(max-width: 768px) 100vw, 420px"
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.18)_0%,transparent_32%,var(--background)_96%)]" />
-        <div className="absolute inset-x-0 top-0 flex items-start justify-between px-5 pt-[max(1.1rem,env(safe-area-inset-top))]">
-          <div className="relative size-[3.4rem] overflow-hidden rounded-full bg-background/50 ring-1 ring-primary/35 backdrop-blur">
-            <Image
-              src={restaurant.logo}
-              alt={`${restaurant.name} logo`}
-              fill
-              className="object-contain p-2"
-            />
-          </div>
-          <div className="rounded-full border border-primary/30 bg-black/25 px-3 py-2 text-center backdrop-blur">
-            <p className="eyebrow !text-[0.58rem]">Table</p>
-            <p className="font-heading text-xl leading-none text-primary">
-              {tableNumber.padStart(2, "0")}
-            </p>
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(22,8,12,0.45)_0%,transparent_32%,var(--background)_96%)]" />
+        <div className="absolute inset-x-0 top-0 flex items-start justify-between px-4 pt-[max(1rem,env(safe-area-inset-top))]">
+          <BrandMark size={58} />
+          <div className="flex items-center gap-2">
+            <LanguageToggle />
+            <div className="rounded-full border border-primary/30 bg-black/35 px-3 py-2 text-center backdrop-blur">
+              <p className="text-[11px] text-primary">{t("table")}</p>
+              <p className="font-heading text-xl leading-none text-primary">
+                {tableNumber}
+              </p>
+            </div>
           </div>
         </div>
-        <div className="absolute inset-x-0 bottom-0 px-5 pb-7">
-          <p className="eyebrow">{restaurant.tagline}</p>
-          <h1 className="font-heading mt-3 text-[3.4rem] leading-[0.86]">
+        <div className="absolute inset-x-0 bottom-0 px-5 pb-6">
+          <p className="eyebrow">{t("welcomeTo")}</p>
+          <h1 className="font-heading mt-2 text-5xl leading-[0.88]">
             {restaurant.name}
           </h1>
-          <p className="serif-italic mt-3 max-w-[20rem] text-lg leading-snug text-foreground/82">
+          <p className="mt-3 max-w-[22rem] text-sm leading-6 text-foreground/88">
             {restaurant.description}
           </p>
-          <Button
-            className="gold-fill mt-6 h-12 rounded-full px-7 tracking-[0.14em] uppercase"
-            render={<Link href={`/restaurant/${restaurant.slug}/menu/food`} />}
-          >
-            Open the menu
-          </Button>
+          <p className="mt-2 text-xs text-muted-foreground">
+            {restaurant.location} · {restaurant.hours}
+          </p>
+          <div className="mt-5 flex flex-wrap gap-2">
+            <ButtonLink
+              href={menuHref(restaurant.slug)}
+              className="gold-fill h-12 rounded-full px-6"
+            >
+              {t("openMenu")}
+            </ButtonLink>
+            <HelpSheet />
+          </div>
         </div>
       </section>
 
-      <section className="space-y-10 px-5 pt-8">
-        <div className="flex items-center justify-between gap-4 text-xs tracking-[0.14em] text-muted-foreground uppercase">
-          <span>{restaurant.location}</span>
-          <span className="h-px flex-1 bg-primary/20" />
-          <span>{restaurant.hours}</span>
+      <section className="space-y-8 px-5 pt-6">
+        <div className="space-y-3">
+          <h2 className="font-heading text-3xl">{t("chooseFood")}</h2>
+          <DietFilterRow />
+          <CuisineGrid />
+          <Link
+            href={menuHref(restaurant.slug)}
+            className="inline-flex min-h-11 items-center text-sm text-primary underline-offset-4 hover:underline"
+          >
+            {t("seeAll")}
+          </Link>
         </div>
 
-        <div>
-          <SectionTitle eyebrow="The rooms" title="A quiet menu" />
-          <div className="stagger-in mt-5 grid grid-cols-2 gap-3">
-            {restaurant.categories.map((category) => (
-              <Link
-                key={category.id}
-                href={`/restaurant/${restaurant.slug}/menu/${category.slug}`}
-                className="pressable group relative overflow-hidden rounded-[1.35rem] gold-hairline"
-              >
-                <div className="relative aspect-[3/4]">
-                  <Image
-                    src={category.image}
-                    alt=""
-                    fill
-                    sizes="200px"
-                    className="object-cover transition duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/20 to-transparent" />
-                  <div className="absolute inset-x-0 bottom-0 p-3">
-                    <p className="font-heading text-[1.7rem] leading-none text-white">
-                      {category.name}
-                    </p>
-                    <p className="mt-1 line-clamp-2 text-[11px] leading-relaxed text-white/70">
-                      {category.description}
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {items.length > 0 ? (
-          <RecommendationCard triggerItemIds={items.map((line) => line.itemId)} />
-        ) : null}
+        {ready ? <RecommendationCard triggerItemIds={[]} /> : null}
 
         <div className="space-y-4">
-          <SectionTitle eyebrow="This sitting" title="From the pass" />
-          {featured.slice(0, 3).map((item) => (
+          <h2 className="font-heading text-3xl">{t("popular")}</h2>
+          {popular.slice(0, 4).map((item) => (
             <MenuCard key={item.id} item={item} />
           ))}
         </div>
-
-        <LoyaltyCard />
       </section>
     </div>
   );

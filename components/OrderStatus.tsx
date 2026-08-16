@@ -1,14 +1,10 @@
+"use client";
+
 import { Check } from "lucide-react";
+import { useI18n } from "@/features/i18n/LanguageProvider";
 import { cn } from "@/lib/utils";
 import type { OrderKitchenStatus } from "@/types/dining";
 import { kitchenSteps } from "@/services/orderService";
-
-const labels: Record<OrderKitchenStatus, string> = {
-  received: "Order Received",
-  preparing: "Preparing",
-  cooking: "Cooking",
-  ready: "Ready",
-};
 
 export function OrderStatus({
   status,
@@ -17,6 +13,13 @@ export function OrderStatus({
   status: OrderKitchenStatus;
   compact?: boolean;
 }) {
+  const { t } = useI18n();
+  const labels: Record<OrderKitchenStatus, string> = {
+    received: t("statusReceived"),
+    preparing: t("statusPreparing"),
+    cooking: t("statusCooking"),
+    ready: t("statusReady"),
+  };
   const steps = kitchenSteps();
   const currentIndex = steps.indexOf(status);
 
@@ -57,7 +60,7 @@ export function OrderStatus({
               </p>
               {current && !compact ? (
                 <p className="mt-1 text-sm text-muted-foreground">
-                  The kitchen has your table now.
+                  {t("kitchenWait")}
                 </p>
               ) : null}
             </div>

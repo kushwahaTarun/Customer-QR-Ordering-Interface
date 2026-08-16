@@ -44,6 +44,8 @@ interface CartContextValue {
   count: number;
   subtotal: number;
   tax: number;
+  cgst: number;
+  sgst: number;
   total: number;
   drawerOpen: boolean;
   openDrawer: () => void;
@@ -228,6 +230,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       count: snapshot.items.reduce((sum, line) => sum + line.quantity, 0),
       subtotal: totals.subtotal,
       tax: totals.tax,
+      cgst: totals.cgst,
+      sgst: totals.sgst,
       total: totals.total,
       drawerOpen,
       openDrawer: () => setDrawerOpen(true),
@@ -243,6 +247,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       snapshot,
       totals.subtotal,
       totals.tax,
+      totals.cgst,
+      totals.sgst,
       totals.total,
       drawerOpen,
       addItem,

@@ -16,8 +16,8 @@ export interface RestaurantTheme {
   mode: "light" | "dark";
   radius: string;
   fonts: {
-    heading: "cormorant" | "fraunces";
-    sans: "outfit" | "dm-sans";
+    heading: "playfair" | "cormorant" | "fraunces";
+    sans: "karla" | "outfit" | "dm-sans";
   };
   colors: {
     background: string;
@@ -45,6 +45,7 @@ export interface Category {
   id: string;
   slug: string;
   name: string;
+  nameHi: string;
   description: string;
   image: string;
 }
@@ -114,7 +115,9 @@ export interface RecommendationSet {
   headline: string;
   supportingCopy: string;
   suggestedItemIds: string[];
+  reasons?: Record<string, string>;
   combo?: ComboOffer;
+  showOnHome?: boolean;
 }
 
 export interface CartLine {

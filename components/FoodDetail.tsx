@@ -188,6 +188,8 @@ export function FoodDetail({ item }: { item: MenuItem }) {
           />
         </div>
 
+        <RecommendationCard triggerItemIds={[item.id]} />
+
         <div className="flex items-center justify-between">
           <QuantityStepper value={quantity} onChange={setQuantity} />
           <p className="price text-sm text-muted-foreground">
@@ -204,22 +206,19 @@ export function FoodDetail({ item }: { item: MenuItem }) {
         </Button>
 
         {justAdded ? (
-          <div className="space-y-4">
-            <RecommendationCard triggerItemIds={[item.id]} />
-            <Button
-              variant="outline"
-              className="h-11 w-full rounded-full"
-              onClick={() => router.push(`/restaurant/${restaurant.slug}/cart`)}
-            >
-              Review cart
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            className="h-11 w-full rounded-full"
+            onClick={() => router.push(`/restaurant/${restaurant.slug}/cart`)}
+          >
+            View cart
+          </Button>
         ) : (
           <Link
             href={`/restaurant/${restaurant.slug}/menu/${item.categoryId}`}
             className="block text-center text-sm text-muted-foreground"
           >
-            Continue browsing
+            See more food
           </Link>
         )}
       </section>

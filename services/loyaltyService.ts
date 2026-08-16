@@ -1,4 +1,4 @@
-import { demoLoyaltySeed, loyaltyRewards } from "@/mock-data/loyalty";
+import { loyaltyRewards } from "@/mock-data/loyalty";
 import type { LoyaltyAccount, LoyaltyReward } from "@/types/dining";
 import { readCachedStore, writeCachedStore } from "@/utils/browserStore";
 import { storageKeys } from "@/utils/storage";
@@ -44,12 +44,7 @@ export async function joinLoyaltyProgram(input: {
     return { ...existing, name: input.name, mobile: input.mobile };
   }
 
-  const seeded =
-    input.mobile === demoLoyaltySeed[input.slug]?.mobile
-      ? demoLoyaltySeed[input.slug]
-      : null;
-
-  const account: LoyaltyAccount = seeded ?? {
+  const account: LoyaltyAccount = {
     restaurantSlug: input.slug,
     name: input.name,
     mobile: input.mobile,
@@ -126,16 +121,4 @@ export async function redeemReward(input: {
   };
   writeCachedStore(storageKeys.loyalty(input.slug), next);
   return next;
-}
-
-export function seedDemoWalletIfEmpty(slug: string) {
-  const existing = readCachedStore<LoyaltyAccount | null>(
-    storageKeys.loyalty(slug),
-    null,
-  );
-  if (existing?.joined) return existing;
-  const seeded = demoLoyaltySeed[slug];
-  if (!seeded) return existing;
-  writeCachedStore(storageKeys.loyalty(slug), seeded);
-  return seeded;
 }

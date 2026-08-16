@@ -13,7 +13,7 @@ export function DiningChrome({ children }: { children: ReactNode }) {
     <div
       className={cn(
         "relative min-h-dvh",
-        restaurant.theme.mode === "dark" ? "bg-[#050302]" : "bg-[#cbb59a]",
+        restaurant.theme.mode === "dark" ? "bg-[#0C0608]" : "bg-[#cbb59a]",
       )}
     >
       <div className="pointer-events-none absolute inset-0 hidden overflow-hidden md:block">
