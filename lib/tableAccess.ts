@@ -90,4 +90,6 @@ export const demoTables = [
   { slug: "shagun", table: "4", label: "Shagun · Table 4" },
   { slug: "shagun", table: "6", label: "Shagun · Table 6" },
   { slug: "shagun", table: "8", label: "Shagun · Table 8" },
+  { slug: "shagun", table: "10", label: "Shagun · Table 10" },
+  { slug: "shagun", table: "12", label: "Shagun · Table 12" },
 ] as const;

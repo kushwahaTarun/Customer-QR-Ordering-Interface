@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/drawer";
 import { useCart } from "@/features/cart/CartProvider";
 import { useRestaurant } from "@/features/restaurant/RestaurantProvider";
-import { findMenuItemSync } from "@/services/menuService";
+import { findMenuItemSync } from "@/services/menuLookup";
 import { formatINR } from "@/utils/currency";
 import { describeSelections } from "@/utils/pricing";
 
@@ -47,7 +47,7 @@ export function CartDrawer() {
         </DrawerHeader>
         <div className="max-h-[46vh] space-y-3 overflow-y-auto px-4">
           {items.map((line) => {
-            const item = findMenuItemSync(restaurant.slug, line.itemId);
+            const item = findMenuItemSync(restaurant.slug, line.itemId, restaurant.menuItems);
             if (!item) return null;
             const extras = describeSelections(
               item.customizations,

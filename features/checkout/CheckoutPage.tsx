@@ -14,7 +14,7 @@ import { useLoyalty } from "@/features/loyalty/LoyaltyProvider";
 import { useRestaurant } from "@/features/restaurant/RestaurantProvider";
 import { useSession } from "@/features/session/SessionProvider";
 import { createOrder } from "@/services/orderService";
-import { findMenuItemSync } from "@/services/menuService";
+import { findMenuItemSync } from "@/services/menuLookup";
 import type { PaymentMethod } from "@/types/dining";
 import { formatINR } from "@/utils/currency";
 import { isIndianMobile } from "@/utils/theme";
@@ -115,7 +115,7 @@ export function CheckoutPage() {
             <section className="rounded-[1.4rem] bg-card p-4">
               <ul className="space-y-2 text-sm">
                 {items.map((line) => {
-                  const item = findMenuItemSync(restaurant.slug, line.itemId);
+                  const item = findMenuItemSync(restaurant.slug, line.itemId, restaurant.menuItems);
                   return (
                     <li key={line.lineId} className="flex justify-between gap-3">
                       <span>

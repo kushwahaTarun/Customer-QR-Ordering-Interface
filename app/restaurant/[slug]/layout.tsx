@@ -8,6 +8,8 @@ import {
   getRestaurantSlugs,
 } from "@/services/restaurantService";
 
+export const dynamic = "force-dynamic";
+
 export function generateStaticParams() {
   return getRestaurantSlugs().map((slug) => ({ slug }));
 }

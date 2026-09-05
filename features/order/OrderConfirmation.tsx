@@ -8,7 +8,7 @@ import { useRestaurant } from "@/features/restaurant/RestaurantProvider";
 import { useCart } from "@/features/cart/CartProvider";
 import { useI18n } from "@/features/i18n/LanguageProvider";
 import { getOrder, refreshKitchenStatus } from "@/services/orderService";
-import { findMenuItemSync } from "@/services/menuService";
+import { findMenuItemSync } from "@/services/menuLookup";
 import type { Order } from "@/types/dining";
 import { formatINR } from "@/utils/currency";
 
@@ -71,7 +71,7 @@ export function OrderConfirmation({ orderId }: { orderId: string }) {
           </h3>
           <ul className="mt-2 space-y-1 text-sm">
             {order.items.map((line) => {
-              const item = findMenuItemSync(restaurant.slug, line.itemId);
+              const item = findMenuItemSync(restaurant.slug, line.itemId, restaurant.menuItems);
               return (
                 <li key={line.lineId}>
                   {item?.name ?? line.itemId} x{line.quantity}

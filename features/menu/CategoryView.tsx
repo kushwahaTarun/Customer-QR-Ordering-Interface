@@ -28,7 +28,14 @@ export function CategoryView({ categorySlug }: { categorySlug: string }) {
 
   const items = useMemo(() => {
     return restaurant.menuItems.filter((item) => {
-      if (selected !== "all" && item.categoryId !== selected) return false;
+      if (
+        selected !== "all" &&
+        item.categoryId !== selected &&
+        restaurant.categories.find((entry) => entry.id === item.categoryId)
+          ?.slug !== selected
+      ) {
+        return false;
+      }
       if (!matchesDiet(item.diet, dietFilter)) return false;
       const needle = query.trim().toLowerCase();
       if (!needle) return true;
@@ -99,7 +106,7 @@ export function CategoryView({ categorySlug }: { categorySlug: string }) {
               key={entry.id}
               active={entry.slug === selected}
               onClick={() => selectCategory(entry.slug)}
-              count={categoryCounts[entry.id] ?? 0}
+              count={categoryCounts[entry.id] ?? categoryCounts[entry.slug] ?? 0}
             >
               {lang === "hi" ? entry.nameHi : entry.name}
             </FilterChip>

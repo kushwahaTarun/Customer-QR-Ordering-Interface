@@ -17,7 +17,8 @@ export function CuisineGrid() {
       {restaurant.categories.map((category, index) => {
         const count = restaurant.menuItems.filter(
           (item) =>
-            item.categoryId === category.id &&
+            (item.categoryId === category.id ||
+              item.categoryId === category.slug) &&
             item.available &&
             matchesDiet(item.diet, dietFilter),
         ).length;

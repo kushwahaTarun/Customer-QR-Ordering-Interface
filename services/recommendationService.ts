@@ -1,5 +1,5 @@
 import { recommendations } from "@/mock-data/recommendations";
-import { findMenuItemSync } from "@/services/menuService";
+import { findMenuItemSync } from "@/services/menuLookup";
 import type { DietFilter } from "@/utils/diet";
 import { matchesDiet } from "@/utils/diet";
 import type { DietType, MenuItem, RecommendationSet } from "@/types/dining";

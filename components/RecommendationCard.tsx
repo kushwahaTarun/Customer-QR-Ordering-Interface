@@ -12,7 +12,7 @@ import {
   itemReason,
   type ResolvedRecommendation,
 } from "@/services/recommendationService";
-import { findMenuItemSync } from "@/services/menuService";
+import { findMenuItemSync } from "@/services/menuLookup";
 import { formatINR } from "@/utils/currency";
 import { matchesDiet } from "@/utils/diet";
 import { defaultSelections } from "@/utils/pricing";
@@ -43,7 +43,11 @@ export function RecommendationCard({
   if (!data || data.items.length === 0) return null;
 
   const addSuggested = (itemId: string) => {
-    const item = findMenuItemSync(restaurant.slug, itemId);
+    const item = findMenuItemSync(
+      restaurant.slug,
+      itemId,
+      restaurant.menuItems,
+    );
     if (!item || !item.available) return;
     addItem({ item, selectedOptions: defaultSelections(item) });
   };
@@ -52,7 +56,11 @@ export function RecommendationCard({
     if (!data.set.combo) return;
     for (const itemId of data.set.combo.itemIds) {
       const already = items.some((line) => line.itemId === itemId);
-      const item = findMenuItemSync(restaurant.slug, itemId);
+      const item = findMenuItemSync(
+      restaurant.slug,
+      itemId,
+      restaurant.menuItems,
+    );
       if (!item || already) continue;
       if (!matchesDiet(item.diet, dietFilter)) return;
       addItem({ item, selectedOptions: defaultSelections(item), silent: true });
@@ -99,7 +107,11 @@ export function RecommendationCard({
       </div>
       {data.set.combo &&
       data.set.combo.itemIds.every((id) => {
-        const item = findMenuItemSync(restaurant.slug, id);
+        const item = findMenuItemSync(
+          restaurant.slug,
+          id,
+          restaurant.menuItems,
+        );
         if (!item) return false;
         return matchesDiet(item.diet, dietFilter);
       }) ? (

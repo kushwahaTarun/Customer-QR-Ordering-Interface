@@ -10,7 +10,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/features/cart/CartProvider";
 import { useRestaurant } from "@/features/restaurant/RestaurantProvider";
-import { findMenuItemSync } from "@/services/menuService";
+import { findMenuItemSync } from "@/services/menuLookup";
 import { formatINR } from "@/utils/currency";
 import { describeSelections } from "@/utils/pricing";
 
@@ -55,7 +55,7 @@ export function CartPage() {
           <>
             <div className="space-y-3">
               {items.map((line) => {
-                const item = findMenuItemSync(restaurant.slug, line.itemId);
+                const item = findMenuItemSync(restaurant.slug, line.itemId, restaurant.menuItems);
                 if (!item) return null;
                 const extras = describeSelections(
                   item.customizations,

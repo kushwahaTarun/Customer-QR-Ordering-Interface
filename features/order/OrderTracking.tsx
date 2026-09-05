@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/dining/PageHeader";
 import { useRestaurant } from "@/features/restaurant/RestaurantProvider";
 import { useI18n } from "@/features/i18n/LanguageProvider";
 import { getOrder, refreshKitchenStatus } from "@/services/orderService";
-import { findMenuItemSync } from "@/services/menuService";
+import { findMenuItemSync } from "@/services/menuLookup";
 import type { Order } from "@/types/dining";
 
 export function OrderTracking({ orderId }: { orderId: string }) {
@@ -65,7 +65,7 @@ export function OrderTracking({ orderId }: { orderId: string }) {
           </h3>
           <div className="space-y-2">
             {order.items.map((line) => {
-              const item = findMenuItemSync(restaurant.slug, line.itemId);
+              const item = findMenuItemSync(restaurant.slug, line.itemId, restaurant.menuItems);
               if (!item) return null;
               return (
                 <div
