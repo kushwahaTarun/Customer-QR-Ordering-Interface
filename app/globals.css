@@ -7,8 +7,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--restaurant-sans, var(--font-montserrat), ui-sans-serif, system-ui, sans-serif);
-  --font-heading: var(--restaurant-heading, var(--font-cormorant), "Times New Roman", serif);
+  --font-sans: var(--restaurant-sans, var(--font-karla), ui-sans-serif, system-ui, sans-serif);
+  --font-heading: var(--restaurant-heading, var(--font-playfair), Georgia, serif);
   --font-mono: var(--font-geist-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -49,24 +49,24 @@
 }
 
 :root {
-  --background: #100c09;
-  --foreground: #f6efe4;
-  --card: #1a1410;
-  --card-foreground: #f6efe4;
-  --popover: #201913;
-  --popover-foreground: #f6efe4;
-  --primary: #c9a46a;
-  --primary-foreground: #1a140c;
-  --secondary: #2a221b;
-  --secondary-foreground: #f6efe4;
-  --muted: #241c16;
-  --muted-foreground: #b7a594;
-  --accent: #d7b57a;
-  --accent-foreground: #1a140c;
-  --destructive: #d47361;
-  --border: rgba(201, 164, 106, 0.18);
-  --input: rgba(201, 164, 106, 0.22);
-  --ring: #c9a46a;
+  --background: #16080c;
+  --foreground: #f7efe6;
+  --card: #221016;
+  --card-foreground: #f7efe6;
+  --popover: #2a141a;
+  --popover-foreground: #f7efe6;
+  --primary: #d4a85a;
+  --primary-foreground: #1a0c0a;
+  --secondary: #2e171c;
+  --secondary-foreground: #f7efe6;
+  --muted: #261218;
+  --muted-foreground: #d4c4b4;
+  --accent: #9b2c3a;
+  --accent-foreground: #fff8f1;
+  --destructive: #e06a5a;
+  --border: rgba(212, 168, 90, 0.22);
+  --input: rgba(212, 168, 90, 0.26);
+  --ring: #d4a85a;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -84,24 +84,24 @@
 }
 
 .dark {
-  --background: #100c09;
-  --foreground: #f6efe4;
-  --card: #1a1410;
-  --card-foreground: #f6efe4;
-  --popover: #201913;
-  --popover-foreground: #f6efe4;
-  --primary: #c9a46a;
-  --primary-foreground: #1a140c;
-  --secondary: #2a221b;
-  --secondary-foreground: #f6efe4;
-  --muted: #241c16;
-  --muted-foreground: #b7a594;
-  --accent: #d7b57a;
-  --accent-foreground: #1a140c;
-  --destructive: #d47361;
-  --border: rgba(201, 164, 106, 0.18);
-  --input: rgba(201, 164, 106, 0.22);
-  --ring: #c9a46a;
+  --background: #16080c;
+  --foreground: #f7efe6;
+  --card: #221016;
+  --card-foreground: #f7efe6;
+  --popover: #2a141a;
+  --popover-foreground: #f7efe6;
+  --primary: #d4a85a;
+  --primary-foreground: #1a0c0a;
+  --secondary: #2e171c;
+  --secondary-foreground: #f7efe6;
+  --muted: #261218;
+  --muted-foreground: #d4c4b4;
+  --accent: #9b2c3a;
+  --accent-foreground: #fff8f1;
+  --destructive: #e06a5a;
+  --border: rgba(212, 168, 90, 0.22);
+  --input: rgba(212, 168, 90, 0.26);
+  --ring: #d4a85a;
 }
 
 @layer base {
@@ -227,9 +227,51 @@
 
 .scan-grid {
   background-image:
-    linear-gradient(rgba(201, 164, 106, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(201, 164, 106, 0.08) 1px, transparent 1px);
-  background-size: 48px 48px;
+    linear-gradient(rgba(201, 164, 106, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201, 164, 106, 0.07) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+.eyebrow {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.gold-rule {
+  height: 1px;
+  width: 2.75rem;
+  background: linear-gradient(90deg, var(--primary), transparent);
+}
+
+.gold-rule-center {
+  height: 1px;
+  width: 4rem;
+  margin-inline: auto;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+}
+
+.gold-hairline {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 28%, transparent);
+}
+
+.gold-fill {
+  background: linear-gradient(180deg, #e3c48a 0%, #c9a46a 48%, #a07d3d 100%);
+  color: #1a140c;
+}
+
+.serif-italic {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.device-bezel {
+  background:
+    linear-gradient(180deg, rgba(212, 175, 55, 0.28), rgba(80, 58, 28, 0.08)),
+    #120e0b;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -242,6 +284,7 @@
   }
   .pressable,
   .pressable:active,
+  .group-hover\:scale-\[1\.03\],
   .group-hover\:scale-105 {
     transform: none !important;
     transition: none !important;

@@ -18,9 +18,9 @@ export function DietBadge({
     <span
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.12em]",
-        diet === "veg" && "border-emerald-300/70 text-emerald-100",
-        diet === "non-veg" && "border-rose-300/70 text-rose-100",
-        diet === "egg" && "border-amber-300/70 text-amber-100",
+        diet === "veg" && "border-emerald-400 text-emerald-50",
+        diet === "non-veg" && "border-rose-400 text-rose-50",
+        diet === "egg" && "border-amber-400 text-amber-50",
         className,
       )}
     >

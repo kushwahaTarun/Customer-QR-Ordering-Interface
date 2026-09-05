@@ -1,17 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/dining/PageHeader";
 import { QuantityStepper } from "@/components/dining/QuantityStepper";
 import { RecommendationCard } from "@/components/RecommendationCard";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/features/cart/CartProvider";
 import { useRestaurant } from "@/features/restaurant/RestaurantProvider";
-import { findMenuItemSync } from "@/services/menuService";
+import { findMenuItemSync } from "@/services/menuLookup";
 import { formatINR } from "@/utils/currency";
 import { describeSelections } from "@/utils/pricing";
 
@@ -23,7 +22,8 @@ export function CartPage() {
     removeItem,
     restoreItem,
     subtotal,
-    tax,
+    cgst,
+    sgst,
     total,
     comboDiscount,
     comboLabel,
@@ -40,22 +40,22 @@ export function CartPage() {
       <div className="space-y-5 px-4 py-5">
         {count === 0 ? (
           <div className="rounded-[1.6rem] bg-card px-5 py-12 text-center ring-1 ring-foreground/8">
-            <p className="font-heading text-3xl">The table is empty</p>
+            <p className="font-heading text-3xl">Your cart is empty</p>
             <p className="mt-2 text-sm text-muted-foreground">
-              Begin with a plate from the menu.
+              Add food from the menu.
             </p>
-            <Button
+            <ButtonLink
+              href={`/restaurant/${restaurant.slug}/menu/all`}
               className="mt-6 rounded-full"
-              render={<Link href={`/restaurant/${restaurant.slug}/menu/food`} />}
             >
               Browse the menu
-            </Button>
+            </ButtonLink>
           </div>
         ) : (
           <>
             <div className="space-y-3">
               {items.map((line) => {
-                const item = findMenuItemSync(restaurant.slug, line.itemId);
+                const item = findMenuItemSync(restaurant.slug, line.itemId, restaurant.menuItems);
                 if (!item) return null;
                 const extras = describeSelections(
                   item.customizations,
@@ -133,32 +133,36 @@ export function CartPage() {
 
             <div className="rounded-[1.4rem] bg-card p-4 ring-1 ring-foreground/8">
               <div className="flex justify-between text-sm text-muted-foreground">
-                <span>Subtotal</span>
+                <span>Item total</span>
                 <span className="price">{formatINR(subtotal)}</span>
               </div>
               {comboDiscount > 0 ? (
                 <div className="mt-2 flex justify-between text-sm text-primary">
-                  <span>{comboLabel ?? "Combo offer"}</span>
+                  <span>{comboLabel ?? "Offer"}</span>
                   <span>- {formatINR(comboDiscount)}</span>
                 </div>
               ) : null}
               <div className="mt-2 flex justify-between text-sm text-muted-foreground">
-                <span>Taxes</span>
-                <span>{formatINR(tax)}</span>
+                <span>CGST 2.5%</span>
+                <span className="price">{formatINR(cgst)}</span>
+              </div>
+              <div className="mt-2 flex justify-between text-sm text-muted-foreground">
+                <span>SGST 2.5%</span>
+                <span className="price">{formatINR(sgst)}</span>
               </div>
               <Separator className="my-3" />
               <div className="flex justify-between text-base font-medium">
-                <span>Total</span>
+                <span>To pay</span>
                 <span className="price">{formatINR(total)}</span>
               </div>
             </div>
 
-            <Button
-              className="h-12 w-full rounded-full text-base"
-              render={<Link href={`/restaurant/${restaurant.slug}/checkout`} />}
+            <ButtonLink
+              href={`/restaurant/${restaurant.slug}/checkout`}
+              className="gold-fill h-12 w-full rounded-full text-base tracking-[0.12em] uppercase"
             >
-              Proceed to Checkout
-            </Button>
+              Checkout
+            </ButtonLink>
           </>
         )}
       </div>

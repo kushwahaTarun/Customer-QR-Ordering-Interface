@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { useLoyalty } from "@/features/loyalty/LoyaltyProvider";
 import { useRestaurant } from "@/features/restaurant/RestaurantProvider";
 import { cn } from "@/lib/utils";
@@ -10,39 +8,40 @@ import { cn } from "@/lib/utils";
 export function LoyaltyCard({ className }: { className?: string }) {
   const restaurant = useRestaurant();
   const { account } = useLoyalty();
-  const name = account.joined ? account.name : "Guest";
+  const name = account.joined ? account.name : "Guest of the house";
 
   return (
     <section
       className={cn(
-        "relative overflow-hidden rounded-[1.7rem] bg-linear-to-br from-primary/90 via-primary to-[#8a6a38] p-5 text-primary-foreground shadow-[0_18px_40px_rgba(0,0,0,0.2)]",
+        "relative overflow-hidden rounded-[1.6rem] p-5 text-[#1a140c] shadow-[0_24px_50px_rgba(0,0,0,0.22)]",
+        "bg-[linear-gradient(145deg,#f3e2bc_0%,#c9a46a_46%,#8d6a32_100%)]",
         restaurant.theme.mode === "light" &&
-          "from-[#9c3d2e] via-[#b4533a] to-[#7a2e22]",
+          "bg-[linear-gradient(145deg,#f0d2c4_0%,#c4784a_48%,#7a2e22_100%)] text-[#fff8f1]",
         className,
       )}
     >
-      <div className="absolute -top-10 -right-8 size-36 rounded-full bg-white/10" />
-      <p className="text-[11px] uppercase tracking-[0.24em] opacity-80">
+      <div className="absolute top-5 right-5 size-10 rounded-full border border-current/25" />
+      <div className="absolute top-7 right-7 size-6 rounded-full border border-current/20" />
+      <p className="text-[10px] tracking-[0.32em] uppercase opacity-70">
         {restaurant.loyaltyProgramName}
       </p>
-      <h2 className="font-heading mt-2 text-3xl">{name}</h2>
-      <div className="mt-6 flex items-end justify-between">
+      <h2 className="font-heading mt-6 text-4xl leading-none">{name}</h2>
+      <div className="mt-8 flex items-end justify-between">
         <div>
-          <p className="text-[11px] uppercase tracking-[0.18em] opacity-75">
-            Points
+          <p className="text-[10px] tracking-[0.22em] uppercase opacity-70">
+            House points
           </p>
-          <p className="mt-1 flex items-center gap-2 font-heading text-5xl leading-none">
+          <p className="font-heading mt-1 text-5xl leading-none">
             {account.joined ? account.points : "—"}
-            <Star className="size-6 fill-current" />
           </p>
         </div>
-        <Button
+        <ButtonLink
+          href={`/restaurant/${restaurant.slug}/loyalty`}
           variant="secondary"
-          className="rounded-full bg-white/15 text-primary-foreground hover:bg-white/25"
-          render={<Link href={`/restaurant/${restaurant.slug}/loyalty`} />}
+          className="rounded-full border border-current/20 bg-black/10 text-inherit hover:bg-black/16"
         >
-          Wallet
-        </Button>
+          Rewards
+        </ButtonLink>
       </div>
     </section>
   );

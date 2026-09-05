@@ -1,47 +1,27 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Loader2, TriangleAlert, Clock3 } from "lucide-react";
+import { CheckCircle2, Loader2, TriangleAlert } from "lucide-react";
 import { PageHeader } from "@/components/dining/PageHeader";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import { Button, ButtonLink } from "@/components/ui/button";
+import { useCart } from "@/features/cart/CartProvider";
+import { useI18n } from "@/features/i18n/LanguageProvider";
 import { useLoyalty } from "@/features/loyalty/LoyaltyProvider";
 import { useRestaurant } from "@/features/restaurant/RestaurantProvider";
 import { getOrder, updatePaymentStatus } from "@/services/orderService";
 import type { Order, PaymentStatus } from "@/types/dining";
 import { formatINR } from "@/utils/currency";
 
-const copy: Record<
-  PaymentStatus,
-  { title: string; body: string }
-> = {
-  pending: {
-    title: "Payment pending",
-    body: "Confirm to charge this table’s bill.",
-  },
-  processing: {
-    title: "Processing",
-    body: "Securely connecting with the payment rail.",
-  },
-  success: {
-    title: "Payment Successful",
-    body: "Order confirmed",
-  },
-  failed: {
-    title: "Payment failed",
-    body: "The charge did not complete. You may try again or pay at the counter.",
-  },
-};
-
 export function PaymentPage({ orderId }: { orderId: string }) {
   const restaurant = useRestaurant();
   const router = useRouter();
+  const { t } = useI18n();
+  const { clearCart } = useCart();
   const { creditOrder } = useLoyalty();
   const [order, setOrder] = useState<Order | null>(null);
   const [status, setStatus] = useState<PaymentStatus>("pending");
-  const [progress, setProgress] = useState(12);
+  const [app, setApp] = useState<"gpay" | "phonepe" | "paytm">("gpay");
 
   useEffect(() => {
     void getOrder(orderId).then((result) => {
@@ -52,108 +32,111 @@ export function PaymentPage({ orderId }: { orderId: string }) {
 
   const runPayment = async (outcome: "success" | "failed") => {
     setStatus("processing");
-    setProgress(38);
     await updatePaymentStatus(orderId, "processing");
-    const tick = window.setInterval(() => {
-      setProgress((value) => Math.min(value + 14, 92));
-    }, 280);
-    await new Promise((resolve) => window.setTimeout(resolve, 1600));
-    window.clearInterval(tick);
+    await new Promise((resolve) => window.setTimeout(resolve, 1400));
     const next = await updatePaymentStatus(orderId, outcome);
     setOrder(next);
     setStatus(outcome);
-    setProgress(outcome === "success" ? 100 : 20);
     if (outcome === "success" && next) {
-      if (next.joinLoyalty) {
-        await creditOrder(next.total);
-      }
+      clearCart();
+      if (next.joinLoyalty) await creditOrder(next.total);
       window.setTimeout(() => {
         router.push(`/restaurant/${restaurant.slug}/order/${next.id}`);
-      }, 900);
+      }, 700);
     }
   };
 
-  const Icon =
+  const title =
     status === "success"
-      ? CheckCircle2
+      ? t("paid")
       : status === "failed"
-        ? TriangleAlert
+        ? t("payFailed")
         : status === "processing"
-          ? Loader2
-          : Clock3;
+          ? t("paying")
+          : t("payUpi");
 
   return (
     <div className="animate-rise">
       <PageHeader
-        title="Payment"
+        title={t("payUpi")}
         subtitle={restaurant.name}
         backHref={`/restaurant/${restaurant.slug}/checkout`}
       />
-      <div className="px-5 py-10 text-center">
-        <div className="mx-auto flex size-20 items-center justify-center rounded-full bg-primary/12 text-primary">
-          <Icon
-            className={status === "processing" ? "size-10 animate-spin" : "size-10"}
-          />
+      <div className="px-5 py-8">
+        <div className="mx-auto mb-6 flex size-16 items-center justify-center rounded-full bg-primary/12 text-primary">
+          {status === "processing" ? (
+            <Loader2 className="size-8 animate-spin" />
+          ) : status === "success" ? (
+            <CheckCircle2 className="size-8" />
+          ) : status === "failed" ? (
+            <TriangleAlert className="size-8" />
+          ) : (
+            <span className="font-heading text-2xl">₹</span>
+          )}
         </div>
-        <h2 className="font-heading mt-6 text-4xl">{copy[status].title}</h2>
-        <p className="mt-2 text-muted-foreground">{copy[status].body}</p>
+        <h2 className="text-center font-heading text-4xl">{title}</h2>
         {order ? (
-          <p className="mt-4 text-sm">
-            Amount {formatINR(order.total)} · Table {order.tableNumber}
+          <p className="mt-2 text-center text-muted-foreground">
+            {formatINR(order.total)} · {t("table")} {order.tableNumber}
           </p>
         ) : null}
-        {status === "success" && order ? (
-          <p className="mt-6 font-heading text-3xl">
-            Order Number: #{order.orderNumber}
-          </p>
-        ) : null}
-        {(status === "pending" || status === "processing") && (
-          <Progress value={progress} className="mx-auto mt-8 max-w-xs" />
-        )}
-        <div className="mx-auto mt-8 flex max-w-xs flex-col gap-2">
-          {status === "pending" ? (
-            <>
-              <Button className="h-12 rounded-full" onClick={() => void runPayment("success")}>
-                Pay now
-              </Button>
-              <Button
-                variant="ghost"
-                className="rounded-full"
-                onClick={() => void runPayment("failed")}
+
+        {status === "pending" ? (
+          <div className="mt-8 space-y-2">
+            {(
+              [
+                ["gpay", "Google Pay"],
+                ["phonepe", "PhonePe"],
+                ["paytm", "Paytm"],
+              ] as const
+            ).map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => setApp(id)}
+                className={`flex min-h-14 w-full items-center justify-between rounded-2xl border px-4 text-left ${
+                  app === id ? "border-primary bg-primary/10" : "border-border"
+                }`}
               >
-                Simulate failed payment
-              </Button>
-            </>
-          ) : null}
-          {status === "failed" ? (
-            <>
-              <Button className="h-12 rounded-full" onClick={() => void runPayment("success")}>
-                Try again
-              </Button>
-              {order ? (
-                <Button
-                  variant="outline"
-                  className="h-11 rounded-full"
-                  render={
-                    <Link href={`/restaurant/${restaurant.slug}/order/${order.id}`} />
-                  }
-                >
-                  Pay at counter instead
-                </Button>
-              ) : null}
-            </>
-          ) : null}
-          {status === "success" && order ? (
+                {label}
+                {app === id ? <span className="text-sm text-primary">✓</span> : null}
+              </button>
+            ))}
             <Button
-              className="h-12 rounded-full"
-              render={
-                <Link href={`/restaurant/${restaurant.slug}/order/${order.id}`} />
-              }
+              className="gold-fill mt-4 h-12 w-full rounded-full"
+              onClick={() => void runPayment("success")}
             >
-              View confirmation
+              {t("payAmount")} {order ? formatINR(order.total) : ""}
             </Button>
-          ) : null}
-        </div>
+            <ButtonLink
+              href={`/restaurant/${restaurant.slug}/checkout`}
+              variant="ghost"
+              className="w-full rounded-full"
+            >
+              {t("cancelPay")}
+            </ButtonLink>
+          </div>
+        ) : null}
+
+        {status === "failed" ? (
+          <div className="mx-auto mt-8 flex max-w-xs flex-col gap-2">
+            <Button
+              className="gold-fill h-12 rounded-full"
+              onClick={() => void runPayment("success")}
+            >
+              {t("tryAgain")}
+            </Button>
+            {order ? (
+              <ButtonLink
+                href={`/restaurant/${restaurant.slug}/order/${order.id}`}
+                variant="outline"
+                className="h-11 rounded-full"
+              >
+                {t("payCounterInstead")}
+              </ButtonLink>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </div>
   );

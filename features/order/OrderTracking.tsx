@@ -5,19 +5,14 @@ import Image from "next/image";
 import { OrderStatus } from "@/components/OrderStatus";
 import { PageHeader } from "@/components/dining/PageHeader";
 import { useRestaurant } from "@/features/restaurant/RestaurantProvider";
+import { useI18n } from "@/features/i18n/LanguageProvider";
 import { getOrder, refreshKitchenStatus } from "@/services/orderService";
-import { findMenuItemSync } from "@/services/menuService";
+import { findMenuItemSync } from "@/services/menuLookup";
 import type { Order } from "@/types/dining";
-
-const statusCopy = {
-  received: "The ticket has reached the pass.",
-  preparing: "Mise en place. Your plates are being built.",
-  cooking: "On the fire now.",
-  ready: "Ready for the table.",
-} as const;
 
 export function OrderTracking({ orderId }: { orderId: string }) {
   const restaurant = useRestaurant();
+  const { t } = useI18n();
   const [order, setOrder] = useState<Order | null>(null);
 
   useEffect(() => {
@@ -43,7 +38,7 @@ export function OrderTracking({ orderId }: { orderId: string }) {
   return (
     <div className="animate-rise">
       <PageHeader
-        title="Live kitchen"
+        title={t("trackOrder")}
         subtitle={`Order #${order.orderNumber}`}
         backHref={`/restaurant/${restaurant.slug}/order/${order.id}`}
       />
@@ -52,10 +47,16 @@ export function OrderTracking({ orderId }: { orderId: string }) {
           <p className="text-[11px] uppercase tracking-[0.22em] text-primary">
             Current status
           </p>
-          <h2 className="font-heading mt-2 text-4xl capitalize">{order.status}</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {statusCopy[order.status]}
-          </p>
+          <h2 className="font-heading mt-2 text-4xl">
+            {order.status === "received"
+              ? t("statusReceived")
+              : order.status === "preparing"
+                ? t("statusPreparing")
+                : order.status === "cooking"
+                  ? t("statusCooking")
+                  : t("statusReady")}
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">{t("kitchenWait")}</p>
         </section>
 
         <section>
@@ -64,7 +65,7 @@ export function OrderTracking({ orderId }: { orderId: string }) {
           </h3>
           <div className="space-y-2">
             {order.items.map((line) => {
-              const item = findMenuItemSync(restaurant.slug, line.itemId);
+              const item = findMenuItemSync(restaurant.slug, line.itemId, restaurant.menuItems);
               if (!item) return null;
               return (
                 <div

@@ -18,10 +18,14 @@ export function computeTotals(
   const safeDiscount = Math.min(Math.max(discount, 0), subtotal);
   const taxable = Math.max(subtotal - safeDiscount, 0);
   const tax = computeTax(taxable, taxRate);
+  const cgst = Math.round(tax / 2);
+  const sgst = tax - cgst;
   return {
     subtotal,
     discount: safeDiscount,
     tax,
+    cgst,
+    sgst,
     total: taxable + tax,
   };
 }

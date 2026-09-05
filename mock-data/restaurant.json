@@ -1,28 +1,24 @@
 {
   "restaurants": [
     {
-      "slug": "abc-lounge",
-      "name": "ABC Lounge",
-      "tagline": "Premium dining experience",
-      "logo": "/brands/abc-lounge.svg",
+      "slug": "shagun",
+      "name": "Shagun",
+      "tagline": "Good food. Happy table.",
+      "logo": "/brands/shagun-logo.jpg",
       "theme": {
         "mode": "dark",
-        "primary": "#c9a46a",
-        "background": "#100c09"
+        "primary": "#D4A85A",
+        "background": "#16080C"
       },
-      "categories": ["food", "drinks", "desserts", "combos"]
-    },
-    {
-      "slug": "cafe-xyz",
-      "name": "Cafe XYZ",
-      "tagline": "Slow mornings. Honest food.",
-      "logo": "/brands/cafe-xyz.svg",
-      "theme": {
-        "mode": "light",
-        "primary": "#9c3d2e",
-        "background": "#f4ebe0"
-      },
-      "categories": ["food", "drinks", "desserts", "combos"]
+      "categories": [
+        "starters",
+        "north-indian",
+        "south-indian",
+        "chinese",
+        "desserts",
+        "drinks",
+        "combos"
+      ]
     }
   ]
 }

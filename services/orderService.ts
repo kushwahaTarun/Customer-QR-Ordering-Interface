@@ -34,11 +34,7 @@ function nextOrderNumber() {
 export async function createOrder(input: CreateOrderInput): Promise<Order> {
   await wait(180);
   const createdAt = new Date();
-  const restaurant = (await import("@/services/restaurantService")).getRestaurantBySlug(
-    input.restaurantSlug,
-  );
-  const resolved = await restaurant;
-  const prep = resolved?.estimatedPrepMinutes ?? 20;
+  const prep = 3;
   const order: Order = {
     id: `ord_${createdAt.getTime()}`,
     orderNumber: nextOrderNumber(),
@@ -77,10 +73,13 @@ export async function updatePaymentStatus(
 }
 
 export function deriveKitchenStatus(order: Order): OrderKitchenStatus {
-  const elapsed = Date.now() - new Date(order.createdAt).getTime();
-  if (elapsed > 18_000) return "ready";
-  if (elapsed > 10_000) return "cooking";
-  if (elapsed > 4_000) return "preparing";
+  const started = new Date(order.createdAt).getTime();
+  const readyAt = new Date(order.estimatedReadyAt).getTime();
+  const span = Math.max(readyAt - started, 60_000);
+  const progress = (Date.now() - started) / span;
+  if (progress >= 0.85) return "ready";
+  if (progress >= 0.4) return "cooking";
+  if (progress >= 0.12) return "preparing";
   return "received";
 }
 

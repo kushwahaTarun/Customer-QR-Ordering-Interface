@@ -1,10 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { Trash2 } from "lucide-react";
 import { QuantityStepper } from "@/components/dining/QuantityStepper";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import {
   Drawer,
   DrawerContent,
@@ -15,7 +14,7 @@ import {
 } from "@/components/ui/drawer";
 import { useCart } from "@/features/cart/CartProvider";
 import { useRestaurant } from "@/features/restaurant/RestaurantProvider";
-import { findMenuItemSync } from "@/services/menuService";
+import { findMenuItemSync } from "@/services/menuLookup";
 import { formatINR } from "@/utils/currency";
 import { describeSelections } from "@/utils/pricing";
 
@@ -48,7 +47,7 @@ export function CartDrawer() {
         </DrawerHeader>
         <div className="max-h-[46vh] space-y-3 overflow-y-auto px-4">
           {items.map((line) => {
-            const item = findMenuItemSync(restaurant.slug, line.itemId);
+            const item = findMenuItemSync(restaurant.slug, line.itemId, restaurant.menuItems);
             if (!item) return null;
             const extras = describeSelections(
               item.customizations,
@@ -125,14 +124,19 @@ export function CartDrawer() {
           </div>
         ) : null}
         <DrawerFooter>
-          <Button
-            className="h-12 rounded-full"
-            disabled={count === 0}
-            render={<Link href={`/restaurant/${restaurant.slug}/cart`} />}
-            onClick={closeDrawer}
-          >
-            Review cart
-          </Button>
+          {count === 0 ? (
+            <Button className="h-12 rounded-full" disabled>
+              Review cart
+            </Button>
+          ) : (
+            <ButtonLink
+              href={`/restaurant/${restaurant.slug}/cart`}
+              className="h-12 rounded-full"
+              onClick={closeDrawer}
+            >
+              Review cart
+            </ButtonLink>
+          )}
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
